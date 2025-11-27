@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robotics Control Platform v5.0.0 | Yandex Robotics</title>
+    <style>
+        /* Yandex Robotics Brand Identity */
+        :root {
+            /* Yandex Robotics Primary Colors */
+            --yandex-orange: #FF4112;
+            --yandex-yellow: #FFB81C;
+            --yandex-green: #2F9E42;
+            --yandex-white: #FFFFFF;
+            --yandex-bg-gray: #E6E7EA;
+            --yandex-text-dark: #000000;
+            --yandex-gray-medium: #70788A;
+            --yandex-gray-light: #A0A6B2;
+            --yandex-red: #E74C3C;
+            
+            /* Design System Variables */
+            --color-primary-brand: var(--yandex-orange);
+            --color-secondary-brand: var(--yandex-yellow);
+            --color-success-brand: var(--yandex-green);
+            --color-white: rgba(255, 255, 255, 1);
+            --color-black: rgba(0, 0, 0, 1);
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-cream-100: rgba(255, 255, 253, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-gray-300: rgba(167, 169, 169, 1);
+            --color-gray-400: rgba(119, 124, 124, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-brown-600: rgba(94, 82, 64, 1);
+            --color-charcoal-700: rgba(31, 33, 33, 1);
+            --color-charcoal-800: rgba(38, 40, 40, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-300: rgba(50, 184, 198, 1);
+            --color-teal-400: rgba(45, 166, 178, 1);
+            --color-teal-500: rgba(33, 128, 141, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-teal-700: rgba(26, 104, 115, 1);
+            --color-red-400: rgba(255, 84, 89, 1);
+            --color-red-500: rgba(192, 21, 47, 1);
+            --color-orange-400: rgba(230, 129, 97, 1);
+            --color-orange-500: rgba(168, 75, 47, 1);
+            --color-green-500: rgba(0, 170, 0, 1);
+
+            --color-brown-600-rgb: 94, 82, 64;
+            --color-teal-500-rgb: 33, 128, 141;
+            --color-slate-900-rgb: 19, 52, 59;
+            --color-slate-500-rgb: 98, 108, 113;
+
+            --color-bg-1: rgba(59, 130, 246, 0.08);
+            --color-bg-2: rgba(245, 158, 11, 0.08);
+            --color-bg-3: rgba(34, 197, 94, 0.08);
+            --color-bg-4: rgba(239, 68, 68, 0.08);
+
+            --color-background: var(--yandex-white);
+            --color-surface: var(--yandex-white);
+            --color-text: var(--yandex-text-dark);
+            --color-text-secondary: var(--color-slate-500);
+            --color-primary: var(--yandex-orange);
+            --color-primary-hover: #E63910;
+            --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+            --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+            --color-success: var(--yandex-green);
+            --color-error: var(--yandex-red);
+            --color-warning: var(--yandex-yellow);
+
+            --font-family-base: 'YS Text', Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-family-display: 'YS Display Heavy', Georgia, serif;
+            --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.06);
+            --radius-base: 8px;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-24: 24px;
+        }
+
+        /* Keep Yandex branding consistent in dark mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-background: #1A1A1A;
+                --color-surface: #2A2A2A;
+                --color-text: #FFFFFF;
+                --color-text-secondary: var(--yandex-gray-light);
+                --color-border: rgba(255, 255, 255, 0.15);
+                --color-card-border: rgba(255, 255, 255, 0.1);
+                --color-bg-1: rgba(255, 65, 18, 0.1);
+                --color-bg-2: rgba(255, 184, 28, 0.1);
+                --color-bg-3: rgba(47, 158, 66, 0.1);
+                --color-bg-4: rgba(231, 76, 60, 0.1);
+            }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-family-base);
+            background: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-card-border);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-24);
+            gap: var(--space-24);
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-16);
+        }
+
+        .app-selector {
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+            padding: var(--space-8) var(--space-12);
+            background: var(--color-bg-1);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .env-badge {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .env-badge.prod { background: var(--yandex-green); color: white; }
+        .env-badge.staging { background: var(--yandex-yellow); color: var(--yandex-text-dark); }
+        .env-badge.dev { background: var(--yandex-red); color: white; }
+
+
+        .nav-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: var(--space-16);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+            font-size: 14px;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            position: relative;
+        }
+
+        .btn-icon:hover {
+            background: var(--color-bg-1);
+        }
+
+        .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--color-error);
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Emergency Alerts - Top Right */
+        .emergency-alerts {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 360px;
+            z-index: 101;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-12);
+        }
+
+        .alert-card {
+            background: var(--yandex-white);
+            border: 2px solid var(--yandex-orange);
+            border-radius: var(--radius-base);
+            padding: var(--space-16);
+            box-shadow: 0 4px 12px rgba(255, 65, 18, 0.2);
+            animation: alertPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes alertPulse {
+            0%, 100% { box-shadow: 0 4px 12px rgba(255, 65, 18, 0.2); }
+            50% { box-shadow: 0 4px 20px rgba(255, 65, 18, 0.4); }
+        }
+
+        .alert-card.warning {
+            border-color: var(--yandex-yellow);
+            animation: none;
+        }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-8);
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--yandex-text-dark);
+            padding: 0;
+            width: 24px;
+            height: 24px;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--yandex-text-dark);
+        }
+
+        .alert-message {
+            font-size: 13px;
+            color: var(--yandex-gray-medium);
+            margin-bottom: var(--space-8);
+        }
+
+        .alert-time {
+            font-size: 11px;
+            color: var(--yandex-gray-light);
+        }
+
+        /* Code Console Toggle - Bottom Left */
+        .code-console-toggle {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            background: var(--yandex-orange);
+            color: white;
+            padding: var(--space-12) var(--space-24);
+            border-top-right-radius: var(--radius-base);
+            cursor: pointer;
+            z-index: 99;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-console-toggle:hover {
+            background: #E63910;
+        }
+
+        /* Sliding Code Console - Bottom Left */
+        .code-console {
+            position: fixed;
+            bottom: -30%;
+            left: 0;
+            width: 50%;
+            height: 30%;
+            background: var(--color-charcoal-800);
+            border-top: 2px solid var(--yandex-orange);
+            border-right: 2px solid var(--yandex-orange);
+            border-top-right-radius: var(--radius-base);
+            z-index: 98;
+            transition: bottom 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-console.open {
+            bottom: 0;
+        }
+
+        .console-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--color-border);
+            background: var(--color-charcoal-700);
+        }
+
+        .console-tab {
+            padding: var(--space-12) var(--space-24);
+            cursor: pointer;
+            color: var(--color-gray-400);
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+        }
+
+        .console-tab.active {
+            color: var(--yandex-orange);
+            border-bottom-color: var(--yandex-orange);
+        }
+
+        .console-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-16);
+            font-family: var(--font-family-mono);
+            font-size: 12px;
+            color: var(--color-gray-200);
+        }
+
+        .console-actions {
+            padding: var(--space-12);
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            gap: var(--space-8);
+        }
+
+        .log-line {
+            margin-bottom: 4px;
+            display: flex;
+            gap: var(--space-8);
+        }
+
+        .log-time { color: var(--color-gray-400); }
+        .log-level-info { color: var(--yandex-green); }
+        .log-level-warning { color: var(--yandex-yellow); }
+        .log-level-error { color: var(--yandex-red); }
+
+        /* Main Content */
+        .main-container {
+            margin-top: 64px;
+            padding: var(--space-24);
+            transition: margin-right 0.3s ease;
+        }
+
+        .main-container.console-open {
+            margin-bottom: 30%;
+        }
+
+        /* Dashboard Tabs */
+        .dashboard-tabs {
+            display: flex;
+            gap: var(--space-8);
+            margin-bottom: var(--space-24);
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: var(--space-12) var(--space-24);
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            border-radius: var(--radius-base);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--yandex-orange);
+            color: white;
+            border-color: var(--yandex-orange);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: var(--color-bg-1);
+        }
+
+        /* Dashboard Content */
+        .dashboard-view {
+            display: none;
+        }
+
+        .dashboard-view.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-base);
+            padding: var(--space-24);
+            margin-bottom: var(--space-24);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-16);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-16);
+            margin-bottom: var(--space-24);
+        }
+
+        .metric-card {
+            background: var(--color-bg-1);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-base);
+            padding: var(--space-16);
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-8);
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--yandex-orange);
+        }
+
+        .metric-trend {
+            font-size: 12px;
+            margin-top: var(--space-8);
+        }
+
+        .trend-up { color: var(--yandex-green); }
+        .trend-down { color: var(--yandex-red); }
+
+        /* Robot Grid */
+        .robot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-16);
+        }
+
+        .robot-card {
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-base);
+            padding: var(--space-16);
+            background: var(--color-surface);
+        }
+
+        .robot-card.active { border-color: var(--yandex-green); background: rgba(47, 158, 66, 0.08); }
+        .robot-card.idle { border-color: var(--yandex-gray-light); background: var(--yandex-bg-gray); }
+        .robot-card.error { border-color: var(--yandex-red); background: rgba(231, 76, 60, 0.08); }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-badge.success { background: rgba(47, 158, 66, 0.15); color: var(--yandex-green); border: 1px solid var(--yandex-green); }
+        .status-badge.error { background: rgba(231, 76, 60, 0.15); color: var(--yandex-red); border: 1px solid var(--yandex-red); }
+        .status-badge.warning { background: rgba(255, 184, 28, 0.15); color: var(--yandex-yellow); border: 1px solid var(--yandex-yellow); }
+        .status-badge.info { background: rgba(255, 65, 18, 0.15); color: var(--yandex-orange); border: 1px solid var(--yandex-orange); }
+
+        /* Buttons */
+        .btn {
+            padding: var(--space-12) var(--space-24);
+            border-radius: var(--radius-base);
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--yandex-orange);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #E63910;
+        }
+
+        .btn-secondary {
+            background: var(--color-bg-1);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-success {
+            background: var(--yandex-green);
+            color: white;
+        }
+
+        .btn-error {
+            background: var(--yandex-red);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: var(--space-8) var(--space-12);
+            font-size: 12px;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: var(--space-12);
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .data-table th {
+            background: var(--color-bg-1);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--color-text-secondary);
+        }
+
+        .data-table tr:hover {
+            background: var(--color-bg-1);
+        }
+
+        /* Thread Comments */
+        .comment-section {
+            margin-top: var(--space-16);
+            padding-top: var(--space-16);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .comment-item {
+            display: flex;
+            gap: var(--space-12);
+            margin-bottom: var(--space-12);
+            padding: var(--space-12);
+            background: var(--color-bg-1);
+            border-radius: var(--radius-base);
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--yandex-orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .comment-text {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .comment-time {
+            font-size: 11px;
+            color: var(--color-text-secondary);
+        }
+
+        .comment-reply {
+            margin-left: 44px;
+            border-left: 2px solid var(--color-border);
+            padding-left: var(--space-12);
+        }
+
+        .add-comment {
+            display: flex;
+            gap: var(--space-8);
+            margin-top: var(--space-12);
+        }
+
+        .add-comment input {
+            flex: 1;
+            padding: var(--space-8) var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            background: var(--color-surface);
+            color: var(--color-text);
+        }
+
+        /* Security Advisories */
+        .advisory-banner {
+            padding: var(--space-16);
+            border-radius: var(--radius-base);
+            margin-bottom: var(--space-16);
+            display: flex;
+            align-items: center;
+            gap: var(--space-12);
+        }
+
+        .advisory-banner.critical {
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px solid var(--yandex-red);
+        }
+
+        .advisory-banner.warning {
+            background: rgba(255, 184, 28, 0.1);
+            border: 2px solid var(--yandex-yellow);
+        }
+
+        .advisory-banner.info {
+            background: rgba(255, 65, 18, 0.1);
+            border: 2px solid var(--yandex-orange);
+        }
+
+        /* 3D Demo Scene Styles */
+        .demo-3d-container {
+            background: #1A1A1A;
+            border-radius: var(--radius-base);
+            padding: var(--space-24);
+            margin-bottom: var(--space-24);
+            position: relative;
+            min-height: 500px;
+        }
+
+        .demo-3d-canvas {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #2A2A2A 0%, #1A1A1A 100%);
+            border-radius: var(--radius-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--yandex-gray-light);
+            font-size: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-controls {
+            position: absolute;
+            bottom: var(--space-16);
+            right: var(--space-16);
+            display: flex;
+            gap: var(--space-8);
+        }
+
+        .ai-reasoning-panel {
+            background: var(--yandex-white);
+            border: 2px solid var(--yandex-orange);
+            border-radius: var(--radius-base);
+            padding: var(--space-24);
+            margin-bottom: var(--space-24);
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--yandex-bg-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: var(--space-8);
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: var(--yandex-green);
+            transition: width 0.5s ease;
+        }
+
+        .reasoning-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+            padding: var(--space-8) 0;
+            border-bottom: 1px solid var(--yandex-bg-gray);
+        }
+
+        .reasoning-item:last-child {
+            border-bottom: none;
+        }
+
+        .reasoning-icon {
+            font-size: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .code-console {
+                width: 100%;
+                left: 0;
+            }
+            .main-container.console-open {
+                margin-bottom: 0;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .emergency-alerts {
+                width: calc(100% - 40px);
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <div class="app-selector">
+                <span style="font-size: 20px;">🤖</span>
+                <select style="border: none; background: transparent; font-weight: 500; cursor: pointer;" id="app-selector">
+                    <option value="consolidator">Consolidator</option>
+                    <option value="palletizer">Palletizer</option>
+                    <option value="depalletizer">Depalletizer</option>
+                    <option value="system">System Admin</option>
+                </select>
+            </div>
+            <div class="env-badge prod" id="env-badge">PROD</div>
+        </div>
+        <div class="nav-right">
+            <div style="font-size: 12px; color: var(--color-text-secondary);">
+                <span style="color: var(--color-success);">●</span> VPN Connected
+            </div>
+            <button class="btn-icon" title="Alerts">
+                🔔
+                <span class="badge">3</span>
+            </button>
+            <button class="btn-icon" title="Settings">⚙️</button>
+            <button class="btn-icon" title="Help">?</button>
+            <div class="user-info">
+                <span>👤</span>
+                <div style="font-size: 13px;">
+                    <div style="font-weight: 600;">Иван Петров</div>
+                    <div style="color: var(--color-text-secondary); font-size: 11px;">Manager</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Emergency Alerts (Top Right, Fixed, Always Visible) -->
+    <div class="emergency-alerts" id="emergency-alerts"></div>
+
+    <!-- Code Console Toggle (Bottom Left) -->
+    <div class="code-console-toggle" id="console-toggle">
+        &lt;/&gt;
+    </div>
+
+    <!-- Sliding Code Console (Bottom-Left, Expandable Up) -->
+    <div class="code-console" id="code-console">
+        <div class="console-tabs">
+            <div class="console-tab active" data-tab="logs">Logs</div>
+            <div class="console-tab" data-tab="api">API</div>
+            <div class="console-tab" data-tab="webhooks">Webhooks</div>
+            <div class="console-tab" data-tab="debug">Debug</div>
+        </div>
+        <div class="console-content" id="console-content">
+            <div class="log-line">
+                <span class="log-time">[14:35:22]</span>
+                <span class="log-level-info">[INFO]</span>
+                <span>System initialized successfully</span>
+            </div>
+            <div class="log-line">
+                <span class="log-time">[14:35:23]</span>
+                <span class="log-level-info">[INFO]</span>
+                <span>Camera feed connected - Robot 1</span>
+            </div>
+            <div class="log-line">
+                <span class="log-time">[14:35:24]</span>
+                <span class="log-level-warning">[WARN]</span>
+                <span>High temperature detected - Robot 3: 58°C</span>
+            </div>
+            <div class="log-line">
+                <span class="log-time">[14:35:25]</span>
+                <span class="log-level-error">[ERROR]</span>
+                <span>Calibration failed - Robot 3</span>
+            </div>
+            <div class="log-line">
+                <span class="log-time">[14:35:26]</span>
+                <span class="log-level-info">[INFO]</span>
+                <span>Task completed - 42 items processed</span>
+            </div>
+        </div>
+        <div class="console-actions">
+            <button class="btn btn-secondary btn-sm">🔍 Filter</button>
+            <button class="btn btn-secondary btn-sm">💾 Export</button>
+            <button class="btn btn-secondary btn-sm">🗑️ Clear</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container" id="main-container">
+        <!-- Security Advisories -->
+        <div class="advisory-banner critical">
+            <span style="font-size: 24px;">🚨</span>
+            <div style="flex: 1;">
+                <div style="font-weight: 600; margin-bottom: 4px;">Unusual access pattern detected</div>
+                <div style="font-size: 12px; color: var(--color-text-secondary);">Review audit log immediately</div>
+            </div>
+            <button class="btn btn-error btn-sm">Review</button>
+        </div>
+
+        <!-- Dashboard Tabs -->
+        <div class="dashboard-tabs">
+            <button class="tab-btn" data-view="operator">👤 Operator</button>
+            <button class="tab-btn active" data-view="manager">📊 Manager</button>
+            <button class="tab-btn" data-view="developer">👨💻 Developer</button>
+            <button class="tab-btn" data-view="demo">🎬 Demo</button>
+            <button class="tab-btn" data-view="business">📈 Business</button>
+            <button class="tab-btn" data-view="admin">🔧 Admin</button>
+        </div>
+
+        <!-- OPERATOR DASHBOARD -->
+        <div class="dashboard-view" id="operator-view">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🤖 Robot Fleet Status</h2>
+                    <span class="status-badge info">1/3 Active</span>
+                </div>
+                <div class="robot-grid">
+                    <div class="robot-card active">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 16px;">🤖 Robot 1</div>
+                                <div style="font-size: 12px; color: var(--color-text-secondary);">UR20-001 • Lobach</div>
+                            </div>
+                            <span class="status-badge success">ACTIVE</span>
+                        </div>
+                        <div style="margin-bottom: 12px;">Endless sorting • 867 items</div>
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <button class="btn btn-secondary btn-sm">⏸ Pause</button>
+                            <button class="btn btn-secondary btn-sm">🔄 Restart</button>
+                        </div>
+                    </div>
+                    <div class="robot-card idle">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 16px;">🤖 Robot 2</div>
+                                <div style="font-size: 12px; color: var(--color-text-secondary);">UR20-002 • SEMAT</div>
+                            </div>
+                            <span class="status-badge info">IDLE</span>
+                        </div>
+                        <div style="margin-bottom: 12px;">Standby mode</div>
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <button class="btn btn-success btn-sm">▶ Start</button>
+                        </div>
+                    </div>
+                    <div class="robot-card error">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 16px;">🤖 Robot 3</div>
+                                <div style="font-size: 12px; color: var(--color-text-secondary);">UR20-003 • Belgrade</div>
+                            </div>
+                            <span class="status-badge error">ERROR</span>
+                        </div>
+                        <div style="margin-bottom: 12px; color: var(--color-error);">⚠️ Sensor calibration issue</div>
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <button class="btn btn-error btn-sm">🚨 E-Stop</button>
+                            <button class="btn btn-primary btn-sm">🔧 Fix</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MANAGER DASHBOARD -->
+        <div class="dashboard-view active" id="manager-view">
+            <!-- Main Metrics -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">DISRATE</div>
+                    <div class="metric-value">2.3%</div>
+                    <div class="metric-trend trend-down">📉 -0.5% from yesterday</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">THROUGHPUT</div>
+                    <div class="metric-value">342</div>
+                    <div style="font-size: 12px; color: var(--color-text-secondary);">items/h (Target: 300)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">PERFORMANCE</div>
+                    <div class="metric-value">8.5s</div>
+                    <div style="font-size: 12px; color: var(--color-text-secondary);">Cycle time • 99.2% success</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">VOLUME</div>
+                    <div class="metric-value">2,145</div>
+                    <div style="font-size: 12px; color: var(--color-text-secondary);">Today • 14,230 this week</div>
+                </div>
+            </div>
+
+            <!-- Errors Summary -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">⚠️ Error Statistics</h2>
+                    <button class="btn btn-secondary btn-sm">📊 Export Report</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Error Type</th>
+                            <th>Count</th>
+                            <th>Percentage</th>
+                            <th>Last Occurred</th>
+                            <th>Resolution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sensor Calibration</td>
+                            <td>45</td>
+                            <td><span class="status-badge error">28.5%</span></td>
+                            <td>8m ago</td>
+                            <td>Auto-calibration</td>
+                        </tr>
+                        <tr>
+                            <td>Vision Timeout</td>
+                            <td>32</td>
+                            <td><span class="status-badge warning">20.3%</span></td>
+                            <td>15m ago</td>
+                            <td>Restart vision module</td>
+                        </tr>
+                        <tr>
+                            <td>Motion Planning</td>
+                            <td>28</td>
+                            <td><span class="status-badge warning">17.7%</span></td>
+                            <td>22m ago</td>
+                            <td>Check workspace</td>
+                        </tr>
+                        <tr>
+                            <td>Battery Low</td>
+                            <td>38</td>
+                            <td><span class="status-badge info">24.1%</span></td>
+                            <td>1h ago</td>
+                            <td>Recharge robot</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Thread-style Comments -->
+                <div class="comment-section">
+                    <div style="font-weight: 600; margin-bottom: 12px;">💬 Discussion</div>
+                    <div class="comment-item">
+                        <div class="comment-avatar">👤</div>
+                        <div class="comment-content">
+                            <div class="comment-author">Иван Петров</div>
+                            <div class="comment-text">Sensor calibration errors increased today. Need to investigate Robot 3.</div>
+                            <div class="comment-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="comment-reply">
+                        <div class="comment-item">
+                            <div class="comment-avatar">👨💻</div>
+                            <div class="comment-content">
+                                <div class="comment-author">Tech Support</div>
+                                <div class="comment-text">Scheduled maintenance for Robot 3 tomorrow at 09:00.</div>
+                                <div class="comment-time">1 hour ago</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-comment">
+                        <input type="text" placeholder="Add a comment..." />
+                        <button class="btn btn-primary btn-sm">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar & Filters -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📅 Period Analytics</h2>
+                    <div style="display: flex; gap: 8px;">
+                        <select class="btn btn-secondary btn-sm" style="padding: 6px 12px;">
+                            <option>Today</option>
+                            <option>This Week</option>
+                            <option>This Month</option>
+                            <option>Custom Range</option>
+                        </select>
+                        <select class="btn btn-secondary btn-sm" style="padding: 6px 12px;">
+                            <option>All Locations</option>
+                            <option>Lobach</option>
+                            <option>SEMAT</option>
+                            <option>Belgrade</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="background: var(--color-bg-1); padding: 24px; border-radius: 8px; text-align: center;">
+                    📊 Period performance charts would be displayed here<br>
+                    <small style="color: var(--color-text-secondary);">Disrate trends • Performance graphs • Volume analysis</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- DEVELOPER DASHBOARD -->
+        <div class="dashboard-view" id="developer-view">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📹 AI Vision Debug</h2>
+                    <span class="status-badge success">Live • 60 FPS</span>
+                </div>
+                <div style="background: var(--color-charcoal-800); aspect-ratio: 16/9; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--color-gray-400); font-size: 18px;">
+                    📹 Live Camera Feed with AI Overlay
+                </div>
+                <div style="margin-top: 16px; display: flex; gap: 12px;">
+                    <button class="btn btn-secondary">📸 Snapshot</button>
+                    <button class="btn btn-secondary">🎥 Record</button>
+                    <button class="btn btn-secondary">⚙️ Parameters</button>
+                </div>
+            </div>
+
+            <!-- Degradation Tests -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🧪 Degradation Tests</h2>
+                    <button class="btn btn-error btn-sm">Enable Stress Test</button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                    <div style="padding: 16px; background: var(--color-bg-1); border-radius: 8px;">
+                        <div style="font-size: 12px; color: var(--color-text-secondary);">Network Latency</div>
+                        <div style="font-size: 20px; font-weight: 700; margin-top: 8px;">+50ms</div>
+                        <button class="btn btn-secondary btn-sm" style="margin-top: 8px; width: 100%;">Inject</button>
+                    </div>
+                    <div style="padding: 16px; background: var(--color-bg-1); border-radius: 8px;">
+                        <div style="font-size: 12px; color: var(--color-text-secondary);">Sensor Noise</div>
+                        <div style="font-size: 20px; font-weight: 700; margin-top: 8px;">±10%</div>
+                        <button class="btn btn-secondary btn-sm" style="margin-top: 8px; width: 100%;">Inject</button>
+                    </div>
+                    <div style="padding: 16px; background: var(--color-bg-1); border-radius: 8px;">
+                        <div style="font-size: 12px; color: var(--color-text-secondary);">CPU Overload</div>
+                        <div style="font-size: 20px; font-weight: 700; margin-top: 8px;">90%</div>
+                        <button class="btn btn-secondary btn-sm" style="margin-top: 8px; width: 100%;">Inject</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tester Checklist -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">✅ Tester Requirements</h2>
+                    <span class="status-badge warning">1 Failed</span>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Test</th>
+                            <th>Status</th>
+                            <th>Last Run</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sensor drift detection</td>
+                            <td><span class="status-badge success">Passed</span></td>
+                            <td>5:00 AM</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td>Vision model accuracy</td>
+                            <td><span class="status-badge success">Passed</span></td>
+                            <td>4:30 AM</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td>Gripper force control</td>
+                            <td><span class="status-badge info">Running</span></td>
+                            <td>Now</td>
+                            <td>65%</td>
+                        </tr>
+                        <tr>
+                            <td>Motion planning edge cases</td>
+                            <td><span class="status-badge error">Failed</span></td>
+                            <td>3:00 AM</td>
+                            <td>0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- DEMO DASHBOARD -->
+        <div class="dashboard-view" id="demo-view">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🎬 Live AI Decision Making - 3D Scene Simulation</h2>
+                    <span class="status-badge success">Live Rendering</span>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                <!-- AI Reasoning Panel (Left) -->
+                <div class="ai-reasoning-panel">
+                    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--yandex-text-dark);">🧠 Why This Decision?</h3>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 600; color: var(--yandex-text-dark); margin-bottom: 8px;">Selected: Box #2</div>
+                        <div style="font-size: 14px; color: var(--yandex-gray-medium);">AI Confidence Score</div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 96.8%;"></div>
+                        </div>
+                        <div style="font-size: 20px; font-weight: 700; color: var(--yandex-green); margin-top: 8px;">96.8%</div>
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 600; margin-bottom: 12px; color: var(--yandex-text-dark);">Decision Reasoning:</div>
+                        <div class="reasoning-item">
+                            <span class="reasoning-icon" style="color: var(--yandex-green);">✓</span>
+                            <span style="color: var(--yandex-text-dark);">Size within optimal range (120x80x60mm)</span>
+                        </div>
+                        <div class="reasoning-item">
+                            <span class="reasoning-icon" style="color: var(--yandex-green);">✓</span>
+                            <span style="color: var(--yandex-text-dark);">Weight predicted: 450g (safe margin)</span>
+                        </div>
+                        <div class="reasoning-item">
+                            <span class="reasoning-icon" style="color: var(--yandex-green);">✓</span>
+                            <span style="color: var(--yandex-text-dark);">Orientation optimal (0° rotation needed)</span>
+                        </div>
+                        <div class="reasoning-item">
+                            <span class="reasoning-icon" style="color: var(--yandex-green);">✓</span>
+                            <span style="color: var(--yandex-text-dark);">Position reachable (no obstacles)</span>
+                        </div>
+                        <div class="reasoning-item">
+                            <span class="reasoning-icon" style="color: var(--yandex-green);">✓</span>
+                            <span style="color: var(--yandex-text-dark);">Minimizes travel time (-2.3s vs Box #1)</span>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255, 184, 28, 0.1); padding: 12px; border-radius: 8px; border: 1px solid var(--yandex-yellow);">
+                        <div style="font-weight: 600; font-size: 13px; margin-bottom: 4px; color: var(--yandex-text-dark);">Alternative Options Considered:</div>
+                        <div style="font-size: 12px; color: var(--yandex-gray-medium);">• Box #1: 89.2% confidence (farther position)<br>• Box #3: 76.4% confidence (awkward angle)</div>
+                    </div>
+                </div>
+
+                <!-- 3D Scene (Right) -->
+                <div class="demo-3d-container">
+                    <div class="demo-3d-canvas" id="demo-canvas">
+                        <div style="text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 16px;">🤖</div>
+                            <div style="font-size: 18px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px;">3D Scene Visualization</div>
+                            <div style="font-size: 14px; color: var(--yandex-gray-light);">Live Picking Scenario</div>
+                            <div style="margin-top: 16px; font-size: 13px; color: var(--yandex-yellow);">⚡ WebGL Rendering Active</div>
+                            <div style="margin-top: 24px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                                <div style="background: rgba(255, 65, 18, 0.2); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--yandex-orange);">
+                                    <div style="font-size: 11px; color: var(--yandex-gray-light);">Objects Detected</div>
+                                    <div style="font-size: 20px; font-weight: 700; color: var(--yandex-orange);">3</div>
+                                </div>
+                                <div style="background: rgba(47, 158, 66, 0.2); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--yandex-green);">
+                                    <div style="font-size: 11px; color: var(--yandex-gray-light);">FPS</div>
+                                    <div style="font-size: 20px; font-weight: 700; color: var(--yandex-green);">60</div>
+                                </div>
+                                <div style="background: rgba(255, 184, 28, 0.2); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--yandex-yellow);">
+                                    <div style="font-size: 11px; color: var(--yandex-gray-light);">Avg Confidence</div>
+                                    <div style="font-size: 20px; font-weight: 700; color: var(--yandex-yellow);">94.2%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="demo-controls">
+                        <button class="btn btn-primary btn-sm" id="demo-play">▶ Start Demo</button>
+                        <button class="btn btn-secondary btn-sm">⏸ Pause</button>
+                        <button class="btn btn-secondary btn-sm">⏭ Next Frame</button>
+                        <button class="btn btn-secondary btn-sm">🔄 Repeat</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post-Analysis Results -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📊 Post-Cycle Analysis</h2>
+                    <button class="btn btn-secondary btn-sm">📥 Download Report</button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                    <div style="background: rgba(47, 158, 66, 0.1); padding: 16px; border-radius: 8px; border: 1px solid var(--yandex-green);">
+                        <div style="font-size: 12px; color: var(--yandex-gray-medium); margin-bottom: 4px;">Cycle Time</div>
+                        <div style="font-size: 24px; font-weight: 700; color: var(--yandex-green);">8.5s</div>
+                        <div style="font-size: 11px; color: var(--yandex-gray-medium);">Target: 9.0s ✓</div>
+                    </div>
+                    <div style="background: rgba(47, 158, 66, 0.1); padding: 16px; border-radius: 8px; border: 1px solid var(--yandex-green);">
+                        <div style="font-size: 12px; color: var(--yandex-gray-medium); margin-bottom: 4px;">Success Rate</div>
+                        <div style="font-size: 24px; font-weight: 700; color: var(--yandex-green);">✓ 100%</div>
+                        <div style="font-size: 11px; color: var(--yandex-gray-medium);">Pick successful</div>
+                    </div>
+                    <div style="background: rgba(47, 158, 66, 0.1); padding: 16px; border-radius: 8px; border: 1px solid var(--yandex-green);">
+                        <div style="font-size: 12px; color: var(--yandex-gray-medium); margin-bottom: 4px;">Avg Confidence</div>
+                        <div style="font-size: 24px; font-weight: 700; color: var(--yandex-green);">94.2%</div>
+                        <div style="font-size: 11px; color: var(--yandex-gray-medium);">Above threshold</div>
+                    </div>
+                    <div style="background: rgba(47, 158, 66, 0.1); padding: 16px; border-radius: 8px; border: 1px solid var(--yandex-green);">
+                        <div style="font-size: 12px; color: var(--yandex-gray-medium); margin-bottom: 4px;">Anomalies</div>
+                        <div style="font-size: 24px; font-weight: 700; color: var(--yandex-green);">0</div>
+                        <div style="font-size: 11px; color: var(--yandex-gray-medium);">No issues detected</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics Video Playback -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🎥 Cycle Recording &amp; Playback</h2>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-secondary btn-sm">◀◀ Prev</button>
+                        <button class="btn btn-secondary btn-sm">▶ Play</button>
+                        <button class="btn btn-secondary btn-sm">▶▶ Next</button>
+                        <button class="btn btn-primary btn-sm">💾 Download Segment</button>
+                    </div>
+                </div>
+                <div style="background: var(--yandex-bg-gray); padding: 24px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 16px; color: var(--yandex-text-dark); margin-bottom: 8px;">📹 Frame-by-Frame Analysis Available</div>
+                    <div style="font-size: 13px; color: var(--yandex-gray-medium);">Navigate through recorded cycle • Analyze AI decision points • Export segments</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUSINESS DASHBOARD -->
+        <div class="dashboard-view" id="business-view">
+            <div class="card">
+                <div style="text-align: center; padding: 24px;">
+                    <div style="font-size: 48px; font-weight: 700; color: var(--yandex-green); margin-bottom: 8px;">99.2%</div>
+                    <div style="font-size: 18px; color: var(--color-text-secondary);">System Operating at Peak Performance</div>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">UPTIME</div>
+                    <div class="metric-value">99.8%</div>
+                    <div style="font-size: 12px; color: var(--color-text-secondary);">48h 23m continuous</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">AVG SPEED</div>
+                    <div class="metric-value">8.5s</div>
+                    <div style="font-size: 12px; color: var(--color-text-secondary);">per item</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">COST PER ITEM</div>
+                    <div class="metric-value">$0.12</div>
+                    <div style="font-size: 12px; color: var(--color-text-secondary);">15% reduction</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">TOTAL PROCESSED</div>
+                    <div class="metric-value">58.9K</div>
+                    <div style="font-size: 12px; color: var(--color-text-secondary);">this month</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🧠 AI Decision Transparency</h2>
+                </div>
+                <div style="background: var(--color-bg-1); padding: 24px; border-radius: 8px;">
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Why Box #2 was selected?</div>
+                    <div style="font-size: 14px; line-height: 1.6; color: var(--color-text-secondary);">
+                        ✓ Highest confidence score (96.8%)<br>
+                        ✓ Optimal position for gripper<br>
+                        ✓ Minimizes travel time<br>
+                        ✓ Within weight handling range (1.2kg)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN DASHBOARD -->
+        <div class="dashboard-view" id="admin-view">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">👥 User Management</h2>
+                    <button class="btn btn-primary btn-sm">+ Add User</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Last Login</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Иван Петров</td>
+                            <td><span class="status-badge info">Manager</span></td>
+                            <td>Just now</td>
+                            <td><span class="status-badge success">Active</span></td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">Edit</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🔐 Environment Settings</h2>
+                </div>
+                <div style="display: grid; gap: 16px;">
+                    <div>
+                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 8px;">Active Environment</label>
+                        <select class="btn btn-secondary" style="width: 200px;">
+                            <option selected>PROD (v4.0.0)</option>
+                            <option>STAGING (v4.0.0-rc1)</option>
+                            <option>DEV (v4.0.0-dev)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 8px;">Safety Limits</label>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-secondary">Configure</button>
+                            <button class="btn btn-secondary">Test Limits</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📋 Audit Log</h2>
+                    <button class="btn btn-secondary btn-sm">🔍 Search</button>
+                </div>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    <div style="font-family: var(--font-family-mono); font-size: 12px;">
+                        <div style="padding: 8px; border-bottom: 1px solid var(--color-border);">
+                            <span style="color: var(--color-text-secondary);">[14:35:22]</span>
+                            <span style="color: var(--color-primary);"> [INFO]</span>
+                            User 'ivan@robotics.yandex' logged in from 192.168.1.100
+                        </div>
+                        <div style="padding: 8px; border-bottom: 1px solid var(--color-border);">
+                            <span style="color: var(--color-text-secondary);">[14:30:15]</span>
+                            <span style="color: var(--color-warning);"> [WARN]</span>
+                            Unusual access pattern detected from IP 203.0.113.42
+                        </div>
+                        <div style="padding: 8px; border-bottom: 1px solid var(--color-border);">
+                            <span style="color: var(--color-text-secondary);">[14:25:03]</span>
+                            <span style="color: var(--color-primary);"> [INFO]</span>
+                            Environment switched from STAGING to PROD by 'admin'
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State Management
+        const state = {
+            currentDashboard: 'manager',
+            consoleOpen: false,
+            consoleTab: 'logs',
+            environment: 'PROD'
+        };
+
+        // DOM Elements
+        const consoleToggle = document.getElementById('console-toggle');
+        const codeConsole = document.getElementById('code-console');
+        const mainContainer = document.getElementById('main-container');
+        const dashboardTabs = document.querySelectorAll('.tab-btn');
+        const dashboardViews = document.querySelectorAll('.dashboard-view');
+        const consoleTabs = document.querySelectorAll('.console-tab');
+
+        // Toggle Code Console
+        consoleToggle.addEventListener('click', () => {
+            state.consoleOpen = !state.consoleOpen;
+            codeConsole.classList.toggle('open');
+            mainContainer.classList.toggle('console-open');
+        });
+
+        // Dashboard Tab Switching
+        dashboardTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const view = tab.dataset.view;
+                
+                // Update active tab
+                dashboardTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Update active view
+                dashboardViews.forEach(v => v.classList.remove('active'));
+                document.getElementById(view + '-view').classList.add('active');
+                
+                state.currentDashboard = view;
+            });
+        });
+
+        // Console Tab Switching
+        consoleTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                
+                consoleTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                state.consoleTab = tabName;
+                
+                // Update console content based on tab
+                const content = document.getElementById('console-content');
+                if (tabName === 'api') {
+                    content.innerHTML = '<div style="color: var(--color-gray-400);">API endpoints monitoring...</div>';
+                } else if (tabName === 'webhooks') {
+                    content.innerHTML = '<div style="color: var(--color-gray-400);">Webhook activity log...</div>';
+                } else if (tabName === 'debug') {
+                    content.innerHTML = '<div style="color: var(--color-gray-400);">Debug information...</div>';
+                } else {
+                    // Reset to logs
+                    content.innerHTML = `
+                        <div class="log-line">
+                            <span class="log-time">[14:35:22]</span>
+                            <span class="log-level-info">[INFO]</span>
+                            <span>System initialized successfully</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-time">[14:35:23]</span>
+                            <span class="log-level-info">[INFO]</span>
+                            <span>Camera feed connected - Robot 1</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-time">[14:35:24]</span>
+                            <span class="log-level-warning">[WARN]</span>
+                            <span>High temperature detected - Robot 3: 58°C</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-time">[14:35:25]</span>
+                            <span class="log-level-error">[ERROR]</span>
+                            <span>Calibration failed - Robot 3</span>
+                        </div>
+                    `;
+                }
+            });
+        });
+
+        // Simulate real-time log updates
+        setInterval(() => {
+            if (state.consoleOpen && state.consoleTab === 'logs') {
+                const content = document.getElementById('console-content');
+                const timestamp = new Date().toTimeString().split(' ')[0];
+                const levels = ['info', 'warning', 'error'];
+                const messages = [
+                    'Task completed successfully',
+                    'Memory usage: 2.4GB / 8GB',
+                    'Network latency spike detected',
+                    'Robot 1 processing batch #42'
+                ];
+                
+                const level = levels[Math.floor(Math.random() * levels.length)];
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                
+                const newLog = document.createElement('div');
+                newLog.className = 'log-line';
+                newLog.innerHTML = `
+                    <span class="log-time">[${timestamp}]</span>
+                    <span class="log-level-${level}">[${level.toUpperCase()}]</span>
+                    <span>${message}</span>
+                `;
+                
+                content.appendChild(newLog);
+                content.scrollTop = content.scrollHeight;
+                
+                // Keep only last 50 logs
+                while (content.children.length > 50) {
+                    content.removeChild(content.firstChild);
+                }
+            }
+        }, 3000);
+
+        // Environment Selector
+        document.getElementById('app-selector').addEventListener('change', (e) => {
+            console.log('App switched to:', e.target.value);
+        });
+
+        // Emergency Alerts System
+        const emergencyAlerts = document.getElementById('emergency-alerts');
+        
+        function showAlert(level, title, message, time) {
+            const alertCard = document.createElement('div');
+            alertCard.className = `alert-card ${level}`;
+            alertCard.innerHTML = `
+                <div class="alert-header">
+                    <div>
+                        <div class="alert-title">${level === 'critical' ? '🚨' : '⚠️'} ${title}</div>
+                    </div>
+                    <button class="alert-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+                </div>
+                <div class="alert-message">${message}</div>
+                <div class="alert-time">${time}</div>
+            `;
+            emergencyAlerts.appendChild(alertCard);
+        }
+
+        // Show initial alerts
+        showAlert('critical', 'Sensor Calibration Failure', 'UR20-003 sensor calibration failure - immediate attention required', '14:35:22');
+        showAlert('warning', 'High Temperature Warning', 'Robot 1 temperature: 58°C - approaching threshold', '14:32:10');
+
+        // Simulate new alerts
+        setInterval(() => {
+            if (Math.random() > 0.95) {
+                const alerts = [
+                    { level: 'warning', title: 'Network Latency Spike', message: 'Response time increased to 150ms', time: new Date().toTimeString().split(' ')[0] },
+                    { level: 'critical', title: 'Emergency Stop Triggered', message: 'Robot 2 E-Stop activated by operator', time: new Date().toTimeString().split(' ')[0] }
+                ];
+                const alert = alerts[Math.floor(Math.random() * alerts.length)];
+                showAlert(alert.level, alert.title, alert.message, alert.time);
+            }
+        }, 10000);
+
+        // Demo Mode - 3D Scene Animation
+        let demoRunning = false;
+        const demoPlayBtn = document.getElementById('demo-play');
+        const demoCanvas = document.getElementById('demo-canvas');
+        
+        if (demoPlayBtn) {
+            demoPlayBtn.addEventListener('click', () => {
+                demoRunning = !demoRunning;
+                if (demoRunning) {
+                    demoPlayBtn.innerHTML = '⏸ Pause Demo';
+                    demoPlayBtn.classList.remove('btn-primary');
+                    demoPlayBtn.classList.add('btn-secondary');
+                    animateDemo();
+                } else {
+                    demoPlayBtn.innerHTML = '▶ Start Demo';
+                    demoPlayBtn.classList.add('btn-primary');
+                    demoPlayBtn.classList.remove('btn-secondary');
+                }
+            });
+        }
+
+        function animateDemo() {
+            if (!demoRunning) return;
+            
+            // Simulate 3D scene updates
+            const objects = Math.floor(Math.random() * 2) + 2;
+            const fps = Math.floor(Math.random() * 5) + 58;
+            const confidence = (Math.random() * 4 + 92).toFixed(1);
+            
+            if (demoCanvas) {
+                const objectsEl = demoCanvas.querySelector('div:nth-child(1) > div:nth-child(5) > div:nth-child(1) > div:nth-child(2)');
+                const fpsEl = demoCanvas.querySelector('div:nth-child(1) > div:nth-child(5) > div:nth-child(2) > div:nth-child(2)');
+                const confEl = demoCanvas.querySelector('div:nth-child(1) > div:nth-child(5) > div:nth-child(3) > div:nth-child(2)');
+                
+                if (objectsEl) objectsEl.textContent = objects;
+                if (fpsEl) fpsEl.textContent = fps;
+                if (confEl) confEl.textContent = confidence + '%';
+            }
+            
+            setTimeout(animateDemo, 100);
+        }
+
+        // Initialize
+        console.log('Robotics Control Platform v5.0.0 initialized');
+        console.log('Role: Manager | Environment: PROD | User: Иван Петров');
+        console.log('Yandex Robotics Brand Identity Applied');
+        console.log('✓ Emergency alerts: Top-right');
+        console.log('✓ Code console: Bottom-left');
+        console.log('✓ Demo mode: 3D scene with AI reasoning');
+        console.log('✓ All functionality preserved');
+    </script>
+</body>
+</html>
